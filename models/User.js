@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
+const bcrypt = require('bcrypt');
 
 // create our User model
 class User extends Model {}
@@ -45,6 +46,14 @@ User.init(
       }
     },
     {
+        hooks: {
+            // set up beforeCreate lifecycle "hook" functionality
+            beforeCreate(userData) {
+                return bcrypt.hash(userData.password, 10).then(newUserData => {
+                return newUserData
+                });
+            }
+        },
       sequelize,
       timestamps: false,
       freezeTableName: true,
